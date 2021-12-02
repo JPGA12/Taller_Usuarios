@@ -68,16 +68,79 @@ void agregarOrdenado(lista *lista, nodo *nuevoNodo) {
     }
 
 }
+// Lista secundaria (Aux)
+typedef struct nodoAux {
 
+    int idAux;
+    char nombreAux[TAM_MAXIMO];
+    struct nodoAux *nodoSiguienteAux;
+    struct nodoAux *nodoAnteriorAux;
+
+} nodoAux;
+
+typedef struct listaAux {
+
+    struct nodoAux *inicioAux;
+    struct nodoAux *finAux;
+
+} listaAux;
+
+listaAux *crearListaAux() {
+
+    struct listaAux *nuevaListaAux = malloc(sizeof(listaAux));
+    nuevaListaAux->inicioAux = NULL;
+    nuevaListaAux->finAux = NULL;
+    return nuevaListaAux;
+}
+
+nodoAux *crearNodoAux(int idAux, char *nombreAux[TAM_MAXIMO]) {
+
+    struct nodoAux *nuevoNodoAux = malloc(sizeof(nodoAux));
+    nuevoNodoAux->idAux = idAux;
+    strcpy(nuevoNodoAux->nombreAux, (const char *) nombreAux);
+    nuevoNodoAux->nodoSiguienteAux = NULL;
+    nuevoNodoAux->nodoAnteriorAux = NULL;
+    return nuevoNodoAux;
+}
+
+void agregarOrdenadoInverso(listaAux *listaAux, nodoAux *nuevoNodoAux) {
+    if (listaAux->inicioAux != NULL) {
+        if (listaAux->finAux->idAux <= nuevoNodoAux->idAux) {
+            nuevoNodoAux->nodoAnteriorAux = listaAux->finAux;
+            listaAux->finAux = nuevoNodoAux;
+        } else if (listaAux->inicioAux->idAux>= nuevoNodoAux->idAux) {
+            listaAux->inicioAux->nodoAnteriorAux = nuevoNodoAux;
+            nuevoNodoAux->nodoSiguienteAux = listaAux->inicioAux;
+            listaAux->inicioAux = nuevoNodoAux;
+        } else {
+            struct nodoAux *nodoTemporalAux = listaAux->finAux;
+            while (nodoTemporalAux != NULL) {
+                if (nuevoNodoAux->idAux >= nodoTemporalAux->idAux) {
+                    nuevoNodoAux->nodoSiguienteAux = nodoTemporalAux->nodoSiguienteAux;
+                    nuevoNodoAux->nodoAnteriorAux = nodoTemporalAux;
+                    nodoTemporalAux->nodoSiguienteAux = nuevoNodoAux;
+                    nuevoNodoAux->nodoSiguienteAux = nuevoNodoAux;
+                    break;
+                } else {
+                    nodoTemporalAux = nodoTemporalAux->nodoSiguienteAux;
+                }
+            }
+        }
+    } else {
+        listaAux->inicioAux = nuevoNodoAux;
+        listaAux->finAux = nuevoNodoAux;
+    }
+}
 
 
 int main() {
 
     int opcion = 0;
     struct lista *lista = crearLista();
+    struct listaAux *listaAux = crearListaAux();
     do {
 
-        printf("Seleccion una opcion: \n 1) Agregar persona \n 2) Ver personas(Ascendente) \n 3) Ver personas(Descendente) \n 4. Salir \n");
+        printf("Seleccion una opcion: \n 1) Agregar persona \n 2) Ver personas(Ascendente) \n 3) Ver personas(Descendente) \n 4) Ver lista secundaria \n 5) Salir \n");
         scanf("%i", &opcion);
 
         if (opcion == 1) {
@@ -89,7 +152,9 @@ int main() {
             printf("Digite el nombre: \n");
             scanf("%s", &nombre);
             struct nodo *nuevoNodo = crearNodo(id, (char **) &nombre);
+            struct nodoAux *nuevoNodoAux = crearNodoAux(id,(char **) &nombre);
             agregarOrdenado(lista, nuevoNodo);
+            agregarOrdenadoInverso(listaAux, nuevoNodoAux);
 
         } else if (opcion == 2) {
 
@@ -102,6 +167,7 @@ int main() {
 
             }
             printf("--------------------------------------------\n");
+
         } else if (opcion == 3) {
 
             nodo *nodoTemporal = lista->fin;
@@ -118,10 +184,21 @@ int main() {
                 printf("La lista esta vacia\n");
             }
 
+        } else if (opcion == 4) {
+
+            nodoAux *nodoTemporalAux = listaAux->finAux;
+            printf("--------------------------------------------\n");
+            while (nodoTemporalAux != NULL) {
+
+                printf("ID: %i | Nombre: %s \n", nodoTemporalAux->idAux, nodoTemporalAux->nombreAux);
+                nodoTemporalAux = nodoTemporalAux->nodoAnteriorAux;
+
+            }
+            printf("--------------------------------------------\n");
         } else {
             printf("Opcion incorrecta\n");
         }
-    } while (opcion != 4);
+    } while (opcion != 5);
 
 
     return 0;
