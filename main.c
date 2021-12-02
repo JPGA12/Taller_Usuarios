@@ -34,7 +34,7 @@ nodo *crearNodo(int id, char *nombre[TAM_MAXIMO]) {
     nuevoNodo->id = id;
     strcpy(nuevoNodo->nombre, (const char *) nombre);
     nuevoNodo->nodoSiguiente = NULL;
-    nuevoNodo->nodoAnterior;
+    nuevoNodo->nodoAnterior = NULL;
     return nuevoNodo;
 }
 
@@ -69,13 +69,15 @@ void agregarOrdenado(lista *lista, nodo *nuevoNodo) {
 
 }
 
+
+
 int main() {
 
     int opcion = 0;
     struct lista *lista = crearLista();
     do {
 
-        printf("Seleccion una opcion: \n 1) Agregar persona \n 2.Ver personas(Ascendente) \n 3. Ver personas(Descendente) \n 4. Salir \n");
+        printf("Seleccion una opcion: \n 1) Agregar persona \n 2) Ver personas(Ascendente) \n 3) Ver personas(Descendente) \n 4. Salir \n");
         scanf("%i", &opcion);
 
         if (opcion == 1) {
@@ -92,23 +94,30 @@ int main() {
         } else if (opcion == 2) {
 
             nodo *nodoTemporal = lista->inicio;
+            printf("--------------------------------------------\n");
             while (nodoTemporal != NULL) {
+
                 printf("ID: %i | Nombre: %s \n", nodoTemporal->id, nodoTemporal->nombre);
                 nodoTemporal = nodoTemporal->nodoSiguiente;
 
             }
+            printf("--------------------------------------------\n");
         } else if (opcion == 3) {
 
             nodo *nodoTemporal = lista->fin;
             if (nodoTemporal != NULL) {
+                printf("--------------------------------------------\n");
                 while (nodoTemporal != NULL) {
+
                     printf("ID: %i | Nombre: %s \n", nodoTemporal->id, nodoTemporal->nombre);
                     nodoTemporal = nodoTemporal->nodoAnterior;
+
                 }
+                printf("--------------------------------------------\n");
             } else {
                 printf("La lista esta vacia\n");
             }
-            
+
         } else {
             printf("Opcion incorrecta\n");
         }
